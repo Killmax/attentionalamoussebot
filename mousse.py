@@ -10,5 +10,4 @@ def send_the_soap():
     bot.send_message(chat_id=chat_id, text="ATTENTION A LA MOUSSE ! /attentionalamousse")
 
 if __name__ == "__main__":
-
     send_the_soap()
