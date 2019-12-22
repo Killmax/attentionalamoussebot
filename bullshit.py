@@ -7,14 +7,31 @@ from dotenv import load_dotenv
 load_dotenv()
 bot = telegram.Bot(token=os.getenv("bot_token"))
 chat_id = os.getenv("chat_id")
+script_path = os.path.dirname(__file__)
 
-def send_the_bullshit(bullshit):
-    bot.send_message(chat_id=chat_id, text=bullshit)
+def k_hole():
+    bot.send_message(chat_id=chat_id, text="KOGHONTA 🗝️")
+
+def elbow_fall():
+    downfall = open(os.path.join(script_path, "static/img/descente.jpg"), "rb")
+    bot.send_photo(chat_id=chat_id, photo=downfall, caption="Attention à la descente du coude !")
+
+def dridri_fdp():
+    bot.send_message(chat_id=chat_id, text="/adrofdp")
+
+def where_is_he():
+    bot.send_sticker(chat_id=chat_id, sticker="CAADBAADTQADLq1zBa43XuIzrsdsFgQ")
+
+def pay_respects():
+    mike = open(os.path.join(script_path, "static/img/mike.jpg"), "rb")
+    bot.send_photo(chat_id=chat_id, photo=mike, caption="Une pensée pour Mike, petit ange parti trop gros... /f")
 
 if __name__ == "__main__":
-    sentences = [
-        "/adrofdp",
-        "KOGHONTA 🗝️",
-        "TG Raphi @Raphicci"
+    bullshit = [
+        elbow_fall,
+        k_hole,
+        dridri_fdp,
+        where_is_he,
+        pay_respects
     ]
-    send_the_bullshit(random.choice(sentences))
+    random.choice(bullshit)()
