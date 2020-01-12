@@ -10,7 +10,7 @@ script_path = os.path.dirname(__file__)
 
 def send_the_soap():
     mousse = open(os.path.join(script_path, "static/sound/mousse.mp3"), "rb")
-    bot.send_audio(chat_id=chat_id, audio=mousse, title="ATTENTION A LA MOUSSE !", caption="ATTENTION A LA MOUSSE ! /attentionalamousse")
+    bot.send_audio(chat_id=chat_id, audio=mousse, title="ATTENTION A LA MOUSSE !", performer="Le mousseur fou", caption="ATTENTION A LA MOUSSE ! /attentionalamousse")
 
 if __name__ == "__main__":
     send_the_soap()
