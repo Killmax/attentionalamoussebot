@@ -21,6 +21,8 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+scale = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1]
+
 class SoapState:
     class Entry:
         def __init__(self, user_id, username, timestamp):
@@ -51,7 +53,7 @@ class RankingDB:
     def create_connection(self, filename):
         self.connection = None
         try:
-            self.connection = sqlite3.connect(filename)
+            self.connection = sqlite3.connect(filename, check_same_thread=False)
         except Error as e:
             print(e)
 
@@ -61,24 +63,49 @@ class RankingDB:
             cursor.execute(request)
         except Error as e:
             print(e)
+    
+    def get_connection(self):
+        return self.connection
+
+    def insert_competitor(self, user_id, username, points_to_add):
+        exists_request = "SELECT points FROM mousseurs WHERE user_id = ?"
+        creation_request = "INSERT INTO mousseurs (user_id, username, points, last_win) VALUES (?,?,?,?)"
+        update_request = "UPDATE mousseurs set username = ?, points = ? where user_id = ?"
+        update_request_win = "UPDATE mousseurs set username = ?, points = ?, last_win = ? where user_id = ?"
+        
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(exists_request, (user_id,))
+            player = cursor.fetchone()
+            if (player):
+                former_points = player[0]
+                if (points_to_add == scale[0]):
+                    cursor.execute(update_request_win, (username, points_to_add + former_points, datetime.now().strftime('%d/%m/%Y'), user_id))
+                else:
+                    cursor.execute(update_request, (username, points_to_add + former_points, user_id))
+            else:
+                new_competitor_data = (user_id, username, points_to_add, datetime.now().strftime('%d/%m/%Y') if points_to_add == scale[0] else None)
+                cursor.execute(creation_request, new_competitor_data)
+            self.connection.commit()
+        except Error as e:
+            print(e)
 
     def __init__(self, filename):
-        sql_create_projects_table = """ CREATE TABLE IF NOT EXISTS projects (
-                                        id integer PRIMARY KEY,
-                                        name text NOT NULL,
-                                        begin_date text,
-                                        end_date text
+        sql_create_mousseurs_table = """ CREATE TABLE IF NOT EXISTS mousseurs (
+                                        user_id integer PRIMARY KEY,
+                                        username text NOT NULL,
+                                        points integer,
+                                        last_win text
                                     ); """
-        # create a database connection
         self.create_connection(filename)
     
-        # create tables
         if self.connection is not None:
-            self.create_table(sql_create_projects_table)
+            self.create_table(sql_create_mousseurs_table)
         else:
             print("Error! cannot create the database connection.")
 
 g_state = SoapState()
+g_db = RankingDB('mousseurs.db')
 
 def send_the_soap(context):
     job = context.job
@@ -102,19 +129,24 @@ def set_timer(update, context):
     
     update.message.reply_text('Ready to send the soap.')
 
-def mousse(update, context, db_instance):
+def mousse(update, context):
     if g_state.is_race_opened():
-        if g_state.get_number_entries() == 3:
+        if g_state.get_number_entries() == len(scale): # Add two hours limit
             todays_entries = g_state.get_entries()
             rankings_string = "Here's the ranking of the day:\n"
             for index in range(len(todays_entries)):
-                rankings_string += "P{index} : {username} @ {timestamp}\n".format(index=index + 1,username=todays_entries[index].username, timestamp=todays_entries[index].timestamp)
+                entry = todays_entries[index]
+                rankings_string += "P{index} : {username} @ {timestamp}\n".format(index=index + 1,username=entry.username, timestamp=entry.timestamp)
+                g_db.insert_competitor(str(entry.user_id), entry.username, scale[index])
             context.bot.send_message(chat_id, text=rankings_string)
-            # Update DB and close the race
             g_state.close_the_race()
         else:
             timestamp = datetime.now().strftime('%H:%M:%S.%f')
-            g_state.add_entry(update.effective_user.id, update.effective_user.username, timestamp)
+            if (update.effective_user.username):
+                username = update.effective_user.username
+            else:
+                username = update.effective_user.first_name
+            g_state.add_entry(update.effective_user.id, username, timestamp)
             update.message.reply_text("Your entry was correctly received. Time : " + timestamp)
             pass
 
@@ -124,7 +156,8 @@ def rankings(update, context):
 
 def help(update, context):
     update.message.reply_text('Rules : Send the command /attentionalamousse once the bot has sent the message.\n' + 
-                            'The first person will earn 10 points, the second one 5 points and the third one 1 point\n' + 
+                            'You have 2 hours to send the command as fast as possible\n' + 
+                            'P1 25pts, P2 18pts, P3 15pts, P4 12pts, P5 10pts, P6 8pts, P7 6pts, P8 4pts, P9 2pts, P10 1pt]\n' + 
                             'You can also send the command /rankings to see the standings.\n' +
                             'Don\' forget to init me by sending me the command /setthesoap')
 
@@ -132,8 +165,14 @@ def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
 def main():
-    # To be removed
+    # To be removed, only for test purposes
     g_state.open_the_race()
+
+    sqlite_db_connection = g_db.get_connection()
+
+    if (sqlite_db_connection == None):
+        exit(1)
+
     updater = Updater(token=bot_token, use_context=True)
 
     dispatcher = updater.dispatcher
@@ -148,6 +187,9 @@ def main():
     updater.start_polling()
 
     updater.idle()
+
+    if (sqlite_db_connection != None):
+        sqlite_db_connection.close()
 
 if __name__ == "__main__":
     main()
