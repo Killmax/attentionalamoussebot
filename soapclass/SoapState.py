@@ -26,3 +26,6 @@ class SoapState:
     
     def get_number_entries(self):
         return len(self.entries)
+
+    def has_user_entered(self, user_id):
+        return any(elem.user_id == user_id for elem in self.entries)

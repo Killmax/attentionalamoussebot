@@ -7,8 +7,8 @@ import os
 from datetime import datetime, date, time
 from pytz import timezone
 from dotenv import load_dotenv
-import soapclass.RankingDB as RankingDB
-import soapclass.SoapState as SoapState
+import soapclass.RankingDB as RankingDBModule
+import soapclass.SoapState as SoapStateModule
 
 load_dotenv()
 chat_id = os.getenv('chat_id')
@@ -23,12 +23,12 @@ logger = logging.getLogger(__name__)
 
 scale = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1]
 
-g_state = SoapState()
-g_db = RankingDB('mousseurs.db')
+g_state = SoapStateModule.SoapState()
+g_db = RankingDBModule.RankingDB('mousseurs.db')
 
 def end_the_race(context):
     todays_entries = g_state.get_entries()
-    rankings_string = "class RankingDB:Here's the ranking of the day:\n"
+    rankings_string = "Here's the ranking of the day:\n"
     for index in range(len(todays_entries)):
         entry = todays_entries[index]
         rankings_string += "P{index} : {username} @ {timestamp}\n".format(index=index + 1,username=entry.username, timestamp=entry.timestamp)
@@ -47,7 +47,7 @@ def stop_the_soap(context):
 
 
 def set_timer(update, context):
-    if update.effective_user.id != admin_userid: # FIX ME
+    if str(update.effective_user.id) != admin_userid:
         update.message.reply_text('You cannot set the timer. Only an impressive programmer can do it.')
     else:
         paris_tz = timezone('Europe/Paris')
@@ -70,8 +70,9 @@ def mousse(update, context):
     if g_state.is_race_opened():
         if g_state.get_number_entries() == len(scale):
             end_the_race(context)
+        elif g_state.has_user_entered(update.effective_user.id):
+            update.message.reply_text("You've already entered the race. Skipping your entry...")
         else:
-            # TODO : Needs absolutely to check if the user has already entered
             timestamp = update.message.date.strftime('%H:%M:%S.%f')
             if (update.effective_user.username):
                 username = update.effective_user.username
