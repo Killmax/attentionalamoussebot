@@ -1,0 +1,8 @@
+version: '3'
+services:
+  soaper:
+    build: .
+    container_name: soaper
+    volumes: 
+        - './mousseurs.db:/usr/src/app/mousseurs.db'
+    restart: unless-stopped
