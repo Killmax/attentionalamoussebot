@@ -48,7 +48,8 @@ def stop_the_soap(context):
 
 def set_timer(update, context):
     if str(update.effective_user.id) != admin_userid:
-        update.message.reply_text('You cannot set the timer. Only an impressive programmer can do it.')
+        # update.message.reply_text('You cannot set the timer. Only an impressive programmer can do it.')
+        pass
     else:
         paris_tz = timezone('Europe/Paris')
         start_datetime = time(16, 0, 0, 0, tzinfo=paris_tz)
@@ -71,7 +72,8 @@ def mousse(update, context):
         if g_state.get_number_entries() == len(scale):
             end_the_race(context)
         elif g_state.has_user_entered(update.effective_user.id):
-            update.message.reply_text("You've already entered the race. Skipping your entry...")
+            # update.message.reply_text("You've already entered the race. Skipping your entry...")
+            pass
         else:
             timestamp = update.message.date.strftime('%H:%M:%S.%f')
             if (update.effective_user.username):
@@ -79,17 +81,17 @@ def mousse(update, context):
             else:
                 username = update.effective_user.first_name
             g_state.add_entry(update.effective_user.id, username, timestamp)
-            update.message.reply_text("Your entry was correctly received. Time : " + timestamp)
+            # update.message.reply_text("Your entry was correctly received. Time : " + timestamp)
             pass
 
 # A function to handle "/rankings", which will answer the ranking
 def rankings(update, context):
-    pass
+    update.message.reply_text(g_db.get_rankings())
 
 def help(update, context):
     update.message.reply_text('Rules : Send the command /attentionalamousse once the bot has sent the message.\n' + 
                             'You have 2 hours to send the command as fast as possible\n' + 
-                            'P1 25pts, P2 18pts, P3 15pts, P4 12pts, P5 10pts, P6 8pts, P7 6pts, P8 4pts, P9 2pts, P10 1pt]\n' + 
+                            'P1 25pts, P2 18pts, P3 15pts, P4 12pts, P5 10pts, P6 8pts, P7 6pts, P8 4pts, P9 2pts, P10 1pt\n' + 
                             'You can also send the command /rankings to see the standings.')
 
 def error(update, context):
