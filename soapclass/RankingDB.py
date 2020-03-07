@@ -10,6 +10,7 @@ class RankingDB:
             self.connection = sqlite3.connect(filename, check_same_thread=False)
         except sqlite3.Error as e:
             print(e)
+            exit(1)
 
     def create_table(self, request):
         try:
@@ -17,6 +18,7 @@ class RankingDB:
             cursor.execute(request)
         except sqlite3.Error as e:
             print(e)
+            exit(1)
     
     def get_connection(self):
         return self.connection
@@ -67,6 +69,7 @@ class RankingDB:
             cursor.close()
         except sqlite3.Error as e:
             print(e)
+            exit(1)
         
         return ranking_string
 
@@ -83,3 +86,4 @@ class RankingDB:
             self.create_table(sql_create_mousseurs_table)
         else:
             print("Error! cannot create the database connection.")
+            exit(1)
