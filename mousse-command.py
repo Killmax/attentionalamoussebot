@@ -84,7 +84,6 @@ def mousse(update, context):
             # update.message.reply_text("Your entry was correctly received. Time : " + timestamp)
             pass
 
-# A function to handle "/rankings", which will answer the ranking
 def rankings(update, context):
     update.message.reply_text(g_db.get_rankings())
 
