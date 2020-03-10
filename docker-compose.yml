@@ -5,4 +5,6 @@ services:
     container_name: soaper
     volumes: 
         - './mousseurs.db:/usr/src/app/mousseurs.db'
+    environment: 
+        - 'TZ=Europe/Paris'
     restart: unless-stopped

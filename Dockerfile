@@ -6,6 +6,8 @@ COPY soapclass/*.py ./soapclass/
 COPY mousse-command.py ./
 COPY .env ./
 
+RUN apt-get update
+RUN apt-get install -y tzdata
 RUN pip install pytz 
 RUN pip install python-telegram-bot
 RUN pip install python-dotenv
