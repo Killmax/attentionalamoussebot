@@ -2,15 +2,15 @@
 
 from telegram.ext import Updater, CommandHandler
 import logging
-import time as Time
+import time
 import os
-from datetime import datetime, date, time
-from pytz import timezone
-from dotenv import load_dotenv
+import datetime
+import pytz
+import dotenv
 import soapclass.RankingDB as RankingDBModule
 import soapclass.SoapState as SoapStateModule
 
-load_dotenv()
+dotenv.load_dotenv()
 chat_id = os.getenv('chat_id')
 bot_token = os.getenv('bot_token')
 admin_userid = os.getenv('admin_userid')
@@ -56,7 +56,7 @@ def send_the_soap(context):
         else:
             context.bot.edit_message_text(chat_id=light_message.chat_id, message_id=light_message.message_id, text=light_text)
         if index != len(light_strings) - 1:
-            Time.sleep(1)
+            time.sleep(1)
 
     context.bot.send_message(job.context, text="It's soap out and away we go !")
     mousse = open(os.path.join(script_path, "static/sound/mousse.mp3"), "rb")
@@ -72,9 +72,9 @@ def set_timer(update, context):
         # update.message.reply_text('You cannot set the timer. Only an impressive programmer can do it.')
         pass
     else:
-        paris_tz = timezone('Europe/Paris')
-        start_datetime = time(16, 0, 0, 0, tzinfo=paris_tz)
-        end_datetime = time(18, 0, 0, 0, tzinfo=paris_tz)
+        paris_tz = pytz.timezone('Europe/Paris')
+        start_datetime = datetime.time(16, 0, 0, 0, tzinfo=paris_tz)
+        end_datetime = datetime.time(18, 0, 0, 0, tzinfo=paris_tz)
 
         if 'race_start' in context.chat_data:
             update.message.reply_text('INFO : Removing the former timer')
