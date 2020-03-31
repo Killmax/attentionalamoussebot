@@ -89,9 +89,7 @@ def set_timer(update, context):
 
 def mousse(update, context):
     if g_state.is_race_opened():
-        if g_state.get_number_entries() == len(scale):
-            end_the_race(context)
-        elif g_state.has_user_entered(update.effective_user.id):
+        if g_state.has_user_entered(update.effective_user.id):
             # update.message.reply_text("You've already entered the race. Skipping your entry...")
             pass
         else:
@@ -102,6 +100,8 @@ def mousse(update, context):
                 username = update.effective_user.first_name
             g_state.add_entry(update.effective_user.id, username, timestamp)
             # update.message.reply_text("Your entry was correctly received. Time : " + timestamp)
+            if g_state.get_number_entries() == len(scale):
+                end_the_race(context)
             pass
 
 def rankings(update, context):
