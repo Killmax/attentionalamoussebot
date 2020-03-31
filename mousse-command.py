@@ -2,7 +2,7 @@
 
 from telegram.ext import Updater, CommandHandler
 import logging
-import time
+import time as Time
 import os
 from datetime import datetime, date, time
 from pytz import timezone
@@ -15,6 +15,7 @@ chat_id = os.getenv('chat_id')
 bot_token = os.getenv('bot_token')
 admin_userid = os.getenv('admin_userid')
 script_path = os.path.dirname(__file__)
+chat_id = admin_userid
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -22,6 +23,16 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 scale = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1]
+
+light_strings = [
+    "⚫ ⚫ ⚫ ⚫ ⚫\n⚫ ⚫ ⚫ ⚫ ⚫",
+    "⚫ ⚫ ⚫ ⚫ 🔴\n⚫ ⚫ ⚫ ⚫ 🔴",
+    "⚫ ⚫ ⚫ 🔴 🔴\n⚫ ⚫ ⚫ 🔴 🔴",
+    "⚫ ⚫ 🔴 🔴 🔴\n⚫ ⚫ 🔴 🔴 🔴",
+    "⚫ 🔴 🔴 🔴 🔴\n⚫ 🔴 🔴 🔴 🔴",
+    "🔴 🔴 🔴 🔴 🔴\n🔴 🔴 🔴 🔴 🔴",
+    "⚫ ⚫ ⚫ ⚫ ⚫\n⚫ ⚫ ⚫ ⚫ ⚫"
+]
 
 g_state = SoapStateModule.SoapState()
 g_db = RankingDBModule.RankingDB('mousseurs.db')
@@ -38,6 +49,16 @@ def end_the_race(context):
 
 def send_the_soap(context):
     job = context.job
+    for index in range(len(light_strings)):
+        light_text = light_strings[index]
+        if index == 0:
+            light_message = context.bot.send_message(job.context, text=light_text)
+        else:
+            context.bot.edit_message_text(chat_id=light_message.chat_id, message_id=light_message.message_id, text=light_text)
+        if index != len(light_strings) - 1:
+            Time.sleep(1)
+
+    context.bot.send_message(job.context, text="It's soap out and away we go !")
     mousse = open(os.path.join(script_path, "static/sound/mousse.mp3"), "rb")
     context.bot.send_audio(job.context, audio=mousse, title="ATTENTION A LA MOUSSE !", performer="Le mousseur fou", caption="ATTENTION A LA MOUSSE ! /attentionalamousse")
     g_state.open_the_race()
