@@ -15,7 +15,6 @@ chat_id = os.getenv('chat_id')
 bot_token = os.getenv('bot_token')
 admin_userid = os.getenv('admin_userid')
 script_path = os.path.dirname(__file__)
-chat_id = admin_userid
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
