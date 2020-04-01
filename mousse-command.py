@@ -63,7 +63,8 @@ def send_the_soap(context):
     g_state.open_the_race()
 
 def stop_the_soap(context):
-    end_the_race(context)
+    if g_state.is_race_opened():
+        end_the_race(context)
 
 
 def set_timer(update, context):
