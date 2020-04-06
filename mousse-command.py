@@ -112,7 +112,8 @@ def help(update, context):
     update.message.reply_text('Rules : Send the command /attentionalamousse once the bot has sent the message.\n' + 
                             'You have 2 hours to send the command as fast as possible\n' + 
                             'P1 25pts, P2 18pts, P3 15pts, P4 12pts, P5 10pts, P6 8pts, P7 6pts, P8 4pts, P9 2pts, P10 1pt\n' + 
-                            'You can also send the command /rankings to see the standings.')
+                            'You can also send the command /rankings to see the standings.\n' +
+                            'If you cheat (or exploiting bugs and glitches), you will be disqualified.')
 
 def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
