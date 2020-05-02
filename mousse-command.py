@@ -66,26 +66,38 @@ def stop_the_soap(context):
         end_the_race(context)
 
 
-def set_timer(update, context):
+def set_timer(context):
+    paris_tz = pytz.timezone('Europe/Paris')
+
+    random_minutes = random.randint(0, 5)
+    random_seconds = random.randint(0, 59)
+    random_microseconds = random.randint(0, 999999)
+
+    start_time = datetime.time(16, random_minutes, random_seconds, random_microseconds, tzinfo=paris_tz)
+    end_time = datetime.time(18, random_minutes, random_seconds, random_microseconds, tzinfo=paris_tz)
+
+    context.job_queue.run_once(callback=send_the_soap, when=start_time.replace(tzinfo=None), context=chat_id)
+    context.job_queue.run_once(callback=stop_the_soap, when=end_time.replace(tzinfo=None), context=chat_id)
+
+
+def init_scheduler(update, context):
     if str(update.effective_user.id) != admin_userid:
         # update.message.reply_text('You cannot set the timer. Only an impressive programmer can do it.')
         pass
     else:
-        paris_tz = pytz.timezone('Europe/Paris')
-        start_datetime = datetime.time(16, 0, 0, 0, tzinfo=paris_tz)
-        end_datetime = datetime.time(18, 0, 0, 0, tzinfo=paris_tz)
-
-        if 'race_start' in context.chat_data:
-            update.message.reply_text('INFO : Removing the former timer')
-            old_job = context.chat_data['race_start']
+        if 'soap_scheduler' in context.chat_data:
+            update.message.reply_text('INFO : Removing the former scheduler')
+            old_job = context.chat_data['soap_scheduler']
             old_job.schedule_removal()
 
-        start_job = context.job_queue.run_daily(callback=send_the_soap, time=start_datetime.replace(tzinfo=None), context=chat_id)
-        context.chat_data['race_start'] = start_job
-        end_job = context.job_queue.run_daily(callback=stop_the_soap, time=end_datetime.replace(tzinfo=None), context=chat_id)
-        context.chat_data['race_end'] = end_job
+        paris_tz = pytz.timezone('Europe/Paris')
 
-        update.message.reply_text('Ready to send the soap @ ' + start_datetime.isoformat() + '. End of the race : ' + end_datetime.isoformat())
+        start_time = datetime.time(4, 0, 0, 0, tzinfo=paris_tz)
+
+        scheduler_job = context.job_queue.run_daily(callback=set_timer, time=start_time.replace(tzinfo=None), context=chat_id)
+        context.chat_data['soap_scheduler'] = scheduler_job
+        update.message.reply_text('The scheduler job has been set.')
+
 
 def mousse(update, context):
     if g_state.is_race_opened():
