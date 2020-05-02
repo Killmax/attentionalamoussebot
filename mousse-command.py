@@ -105,12 +105,14 @@ def mousse(update, context):
             # update.message.reply_text("You've already entered the race. Skipping your entry...")
             pass
         else:
-            timestamp = update.message.date.strftime('%H:%M:%S.%f')
+            paris_tz = pytz.timezone('Europe/Paris')
+            utc_tz = pytz.timezone('UTC')
+            timestamp = utc_tz.localize(update.message.date).astimezone(paris_tz)
             if (update.effective_user.username):
                 username = update.effective_user.username
             else:
                 username = update.effective_user.first_name
-            g_state.add_entry(update.effective_user.id, username, timestamp)
+            g_state.add_entry(update.effective_user.id, username, timestamp.strftime('%H:%M:%S.%f'))
             # update.message.reply_text("Your entry was correctly received. Time : " + timestamp)
             if g_state.get_number_entries() == len(scale):
                 end_the_race(context)
@@ -120,11 +122,11 @@ def rankings(update, context):
     update.message.reply_text(g_db.get_rankings())
 
 def help(update, context):
-    update.message.reply_text('Rules : Send the command /attentionalamousse once the bot has sent the message.\n' + 
+    update.message.reply_text('Rules : Click on "/attentionalamousse" once the bot has sent the message.\n' + 
                             'You have 2 hours to send the command as fast as possible\n' + 
                             'P1 25pts, P2 18pts, P3 15pts, P4 12pts, P5 10pts, P6 8pts, P7 6pts, P8 4pts, P9 2pts, P10 1pt\n' + 
                             'You can also send the command /rankings to see the standings.\n' +
-                            'If you cheat (or exploiting bugs and glitches), you will be disqualified.')
+                            'If you jump start (or exploit bugs and glitches), you will be disqualified.')
 
 def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
