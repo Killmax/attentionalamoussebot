@@ -7,6 +7,7 @@ import os
 import datetime
 import pytz
 import dotenv
+import random
 import soapclass.RankingDB as RankingDBModule
 import soapclass.SoapState as SoapStateModule
 
@@ -24,13 +25,11 @@ logger = logging.getLogger(__name__)
 scale = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1]
 
 light_strings = [
-    "⚫ ⚫ ⚫ ⚫ ⚫\n⚫ ⚫ ⚫ ⚫ ⚫",
-    "⚫ ⚫ ⚫ ⚫ 🔴\n⚫ ⚫ ⚫ ⚫ 🔴",
-    "⚫ ⚫ ⚫ 🔴 🔴\n⚫ ⚫ ⚫ 🔴 🔴",
-    "⚫ ⚫ 🔴 🔴 🔴\n⚫ ⚫ 🔴 🔴 🔴",
-    "⚫ 🔴 🔴 🔴 🔴\n⚫ 🔴 🔴 🔴 🔴",
-    "🔴 🔴 🔴 🔴 🔴\n🔴 🔴 🔴 🔴 🔴",
-    "⚫ ⚫ ⚫ ⚫ ⚫\n⚫ ⚫ ⚫ ⚫ ⚫"
+    "⚫ ⚫ ⚫\n⚫ ⚫ ⚫",
+    "⚫ ⚫ 🔴\n⚫ ⚫ 🔴",
+    "⚫ 🔴 🔴\n⚫ 🔴 🔴",
+    "🔴 🔴 🔴\n🔴 🔴 🔴",
+    "⚫ ⚫ ⚫\n⚫ ⚫ ⚫"
 ]
 
 g_state = SoapStateModule.SoapState()
@@ -48,16 +47,16 @@ def end_the_race(context):
 
 def send_the_soap(context):
     job = context.job
+    sleep_time = random.uniform(0.4, 0.8)
     for index in range(len(light_strings)):
         light_text = light_strings[index]
         if index == 0:
             light_message = context.bot.send_message(job.context, text=light_text)
         else:
             context.bot.edit_message_text(chat_id=light_message.chat_id, message_id=light_message.message_id, text=light_text)
-        if index != len(light_strings) - 1:
-            time.sleep(1)
+        if index < len(light_strings) - 1:
+            time.sleep(sleep_time)
 
-    context.bot.send_message(job.context, text="It's soap out and away we go !")
     mousse = open(os.path.join(script_path, "static/sound/mousse.mp3"), "rb")
     context.bot.send_audio(job.context, audio=mousse, title="ATTENTION A LA MOUSSE !", performer="Le mousseur fou", caption="ATTENTION A LA MOUSSE ! /attentionalamousse")
     g_state.open_the_race()
