@@ -143,7 +143,7 @@ def main():
     dispatcher.add_handler(CommandHandler("rankings", rankings))
     dispatcher.add_handler(CommandHandler("help", help))
     dispatcher.add_handler(CommandHandler("attentionalamousse", mousse))
-    dispatcher.add_handler(CommandHandler('setthesoap', set_timer))
+    dispatcher.add_handler(CommandHandler('init', init_scheduler))
 
     dispatcher.add_error_handler(error)
 
