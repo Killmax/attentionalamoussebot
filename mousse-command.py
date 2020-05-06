@@ -69,12 +69,13 @@ def stop_the_soap(context):
 def set_timer(context):
     paris_tz = pytz.timezone('Europe/Paris')
 
-    random_minutes = random.randint(0, 5)
+    random_hours = random.randint(10, 18)
+    random_minutes = random.randint(0, 59)
     random_seconds = random.randint(0, 59)
     random_microseconds = random.randint(0, 999999)
 
-    start_time = datetime.time(16, random_minutes, random_seconds, random_microseconds, tzinfo=paris_tz)
-    end_time = datetime.time(18, random_minutes, random_seconds, random_microseconds, tzinfo=paris_tz)
+    start_time = datetime.time(random_hours, random_minutes, random_seconds, random_microseconds, tzinfo=paris_tz)
+    end_time = datetime.time(random_hours + 2, random_minutes, random_seconds, random_microseconds, tzinfo=paris_tz)
 
     context.job_queue.run_once(callback=send_the_soap, when=start_time.replace(tzinfo=None), context=chat_id)
     context.job_queue.run_once(callback=stop_the_soap, when=end_time.replace(tzinfo=None), context=chat_id)
