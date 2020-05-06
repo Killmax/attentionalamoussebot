@@ -65,7 +65,6 @@ def stop_the_soap(context):
     if g_state.is_race_opened():
         end_the_race(context)
 
-
 def set_timer(context):
     paris_tz = pytz.timezone('Europe/Paris')
 
