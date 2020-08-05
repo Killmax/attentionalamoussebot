@@ -22,9 +22,6 @@ def dridri_fdp():
     bot.send_sticker(chat_id=chat_id, sticker="CAACAgQAAxkBAAIkDF4-wP8smpTDJqw_uSPM6NP9Q_uiAAI7AAMurXMFsFxOoUHqFN8YBA")
     bot.send_message(chat_id=chat_id, text="/adrofdp")
 
-def where_is_he():
-    bot.send_sticker(chat_id=chat_id, sticker="CAADBAADTQADLq1zBa43XuIzrsdsFgQ")
-
 def pay_respects():
     mike = open(os.path.join(script_path, "static/img/mike.jpg"), "rb")
     bot.send_photo(chat_id=chat_id, photo=mike, caption="Une pensée pour Mike, petit ange parti trop gros... /f")
@@ -73,8 +70,6 @@ def guerville_triggered():
     ]
     
     bot.send_sticker(chat_id=chat_id, sticker=random.choice(stickers_id))
-    sleep(random.randint(5, 20))
-    bot.send_sticker(chat_id=chat_id, sticker="CAACAgQAAxkBAAIkCF4-wBk7nRmXBbbhC9ZsPnyq7ak2AAJRAAMurXMFSuKwDlc-4DgYBA")
 
 def yellow_vest():
     bot.send_sticker(chat_id=chat_id, sticker="CAACAgQAAxkBAAIkDl4-wmYk7fVQ0ttgH51PMjHfyFJeAAJcAAMurXMFEMftarxz0IsYBA")
@@ -85,7 +80,6 @@ if __name__ == "__main__":
         elbow_fall,
         k_hole,
         dridri_fdp,
-        where_is_he,
         pay_respects,
         gaziers_unite,
         guerville_triggered,
