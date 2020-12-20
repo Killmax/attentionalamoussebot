@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from telegram.ext import Updater, CommandHandler
+from bullshit import bullshit_sender
 import logging
 import time
 import os
@@ -79,6 +80,14 @@ def set_timer(context):
     context.job_queue.run_once(callback=send_the_soap, when=start_time.replace(tzinfo=None), context=chat_id)
     context.job_queue.run_once(callback=stop_the_soap, when=end_time.replace(tzinfo=None), context=chat_id)
 
+def set_bullshit_timer(context):
+    paris_tz = pytz.timezone('Europe/Paris')
+
+    start_time = datetime.time(random.randint(10, 18), random.randint(0, 59), random.randint(0, 59), random.randint(0, 999999), tzinfo=paris_tz)
+    end_time = datetime.time(random.randint(10, 18), random.randint(0, 59), random.randint(0, 59), random.randint(0, 999999), tzinfo=paris_tz)
+
+    context.job_queue.run_once(callback=bullshit_sender, when=start_time.replace(tzinfo=None), context=chat_id)
+    context.job_queue.run_once(callback=bullshit_sender, when=end_time.replace(tzinfo=None), context=chat_id)
 
 def init_scheduler(update, context):
     if str(update.effective_user.id) != admin_userid:
@@ -90,12 +99,19 @@ def init_scheduler(update, context):
             old_job = context.chat_data['soap_scheduler']
             old_job.schedule_removal()
 
+        if 'soap_bullshitter' in context.chat_data:
+            update.message.reply_text('INFO : Removing the former bullshitter')
+            old_job = context.chat_data['soap_bullshitter']
+            old_job.schedule_removal()
+
         paris_tz = pytz.timezone('Europe/Paris')
 
         start_time = datetime.time(4, 0, 0, 0, tzinfo=paris_tz)
 
         scheduler_job = context.job_queue.run_daily(callback=set_timer, time=start_time.replace(tzinfo=None), context=chat_id)
+        bullshitter_job = context.job_queue.run_daily(callback=set_bullshit_timer, time=start_time.replace(tzinfo=None), context=chat_id)
         context.chat_data['soap_scheduler'] = scheduler_job
+        context.chat_data['soap_bullshitter'] = bullshitter_job
         update.message.reply_text('The scheduler job has been set.')
 
 

@@ -1,38 +1,36 @@
 import telegram
-import time
 import os
 import random
-from dotenv import load_dotenv
-from time import sleep
 
-load_dotenv()
-bot = telegram.Bot(token=os.getenv("bot_token"))
-chat_id = os.getenv("chat_id")
-script_path = os.path.dirname(__file__)
+def k_hole(context, script_path):
+    job = context.job
+    context.bot.send_sticker(job.context, sticker="CAACAgQAAxkBAAIkCl4-wMNJmwOEcnMC1XXOJzrR8JJOAAJdAAMurXMFoVrlM5sfuNcYBA")
+    context.bot.send_message(job.context, text="KOGHONTA 🗝️ /pleinlepif")
 
-def k_hole():
-    bot.send_sticker(chat_id=chat_id, sticker="CAACAgQAAxkBAAIkCl4-wMNJmwOEcnMC1XXOJzrR8JJOAAJdAAMurXMFoVrlM5sfuNcYBA")
-    bot.send_message(chat_id=chat_id, text="KOGHONTA 🗝️ /pleinlepif")
-
-def elbow_fall():
+def elbow_fall(context, script_path):
+    job = context.job
     downfall = open(os.path.join(script_path, "static/img/descente.jpg"), "rb")
-    bot.send_photo(chat_id=chat_id, photo=downfall, caption="Attention à la descente du coude ! /souslepavelaket")
+    context.bot.send_photo(job.context, photo=downfall, caption="Attention à la descente du coude ! /souslepavelaket")
 
-def dridri_fdp():
-    bot.send_sticker(chat_id=chat_id, sticker="CAACAgQAAxkBAAIkDF4-wP8smpTDJqw_uSPM6NP9Q_uiAAI7AAMurXMFsFxOoUHqFN8YBA")
-    bot.send_message(chat_id=chat_id, text="/adrofdp")
+def dridri_fdp(context, script_path):
+    job = context.job
+    context.bot.send_sticker(job.context, sticker="CAACAgQAAxkBAAIkDF4-wP8smpTDJqw_uSPM6NP9Q_uiAAI7AAMurXMFsFxOoUHqFN8YBA")
+    context.bot.send_message(job.context, text="/adrofdp")
 
-def pay_respects():
+def pay_respects(context, script_path):
+    job = context.job
     mike = open(os.path.join(script_path, "static/img/mike.jpg"), "rb")
-    bot.send_photo(chat_id=chat_id, photo=mike, caption="Une pensée pour Mike, petit ange parti trop gros... /f")
+    context.bot.send_photo(job.context, photo=mike, caption="Une pensée pour Mike, petit ange parti trop gros... /f")
 
-def gaziers_unite():
+def gaziers_unite(context, script_path):
+    job = context.job
     gang = open(os.path.join(script_path, "static/img/gaziers.jpg"), "rb")
     gazier = open(os.path.join(script_path, "static/sound/gaziers.mp3"), "rb")
-    bot.send_audio(chat_id=chat_id, audio=gazier, title="GAZIERS ASSEMBLE !", performer="Les gaziers", caption="GAZIERS ASSEMBLE !")
-    bot.send_photo(chat_id=chat_id, photo=gang, caption="GAZIERS ASSEMBLE ! /assemble")
+    context.bot.send_audio(job.context, audio=gazier, title="GAZIERS ASSEMBLE !", performer="Les gaziers", caption="GAZIERS ASSEMBLE !")
+    context.bot.send_photo(job.context, photo=gang, caption="GAZIERS ASSEMBLE ! /assemble")
 
-def guerville_triggered():
+def guerville_triggered(context, script_path):
+    job = context.job
     stickers_id = [
         "CAACAgIAAxkBAAIjxF4-vNlx5_ivb2SnBtrTJMpJ5M3uAAI9AgACSTSIAkM8zYDgtBYyGAQ",
         "CAACAgIAAxkBAAIjxV4-vNoi8JIwj-MNkYigoHiua21KAAI-AgACSTSIAi2Y6W_6cPf2GAQ",
@@ -69,13 +67,15 @@ def guerville_triggered():
         "CAACAgIAAxkBAAIkAl4-vQvYsPRvSrkdIWmdLqwUDtzuAAJeAgACSTSIAiVpNVoUcIlxGAQ"
     ]
     
-    bot.send_sticker(chat_id=chat_id, sticker=random.choice(stickers_id))
+    context.bot.send_sticker(job.context, sticker=random.choice(stickers_id))
 
-def yellow_vest():
-    bot.send_sticker(chat_id=chat_id, sticker="CAACAgQAAxkBAAIkDl4-wmYk7fVQ0ttgH51PMjHfyFJeAAJcAAMurXMFEMftarxz0IsYBA")
-    bot.send_message(chat_id=chat_id, text="MICRON DEMISSION ! /acab")
+def yellow_vest(context, script_path):
+    job = context.job
+    context.bot.send_sticker(job.context, sticker="CAACAgQAAxkBAAIkDl4-wmYk7fVQ0ttgH51PMjHfyFJeAAJcAAMurXMFEMftarxz0IsYBA")
+    context.bot.send_message(job.context, text="MICRON DEMISSION ! /acab")
 
-if __name__ == "__main__":
+def bullshit_sender(context):
+    script_path = os.path.dirname(__file__)
     bullshit = [
         elbow_fall,
         k_hole,
@@ -85,4 +85,4 @@ if __name__ == "__main__":
         guerville_triggered,
         yellow_vest
     ]
-    random.choice(bullshit)()
+    random.choice(bullshit)(context, script_path)
