@@ -122,8 +122,7 @@ def mousse(update, context):
             pass
         else:
             paris_tz = pytz.timezone('Europe/Paris')
-            utc_tz = pytz.timezone('UTC')
-            timestamp = utc_tz.localize(update.message.date).astimezone(paris_tz)
+            timestamp = update.message.date.astimezone(paris_tz)
             if (update.effective_user.username):
                 username = update.effective_user.username
             else:
